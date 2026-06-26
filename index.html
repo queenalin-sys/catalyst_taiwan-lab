@@ -8,108 +8,174 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        body { font-family: 'Noto Sans TC', system-ui, sans-serif; }
-        .glitch { animation: glitch 0.5s infinite; }
-        @keyframes glitch {
-            0%,100% { transform: translate(0); }
-            50% { transform: translate(-3px, 3px); }
+        body { font-family: 'Noto Sans TC', system-ui, sans-serif; background: #0a0a0a; color: #e5e7eb; }
+        .card { transition: all 0.3s; }
+        .card:hover { transform: translateY(-6px); }
+        .drop {
+            animation: drop 0.8s infinite;
+        }
+        @keyframes drop {
+            0% { transform: translateY(-60px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(80px); opacity: 0; }
         }
     </style>
 </head>
-<body class="bg-black text-white min-h-screen">
+<body>
 
-    <!-- Loading -->
+    <!-- Loading - 溶劑滴入試管 -->
     <div id="loading" class="fixed inset-0 bg-black flex items-center justify-center z-50">
         <div class="text-center">
-            <div class="text-6xl mb-8 font-bold tracking-widest glitch text-green-400">瘋狂初始化中...</div>
-            <div class="text-green-400 text-2xl mb-8">WORLD -1</div>
-            <div class="text-8xl mb-8">🧪</div>
-            <div class="w-80 h-2 bg-gray-800 mx-auto rounded overflow-hidden">
-                <div class="h-full bg-green-400 w-0 animate-[loading_1.8s_linear_forwards]"></div>
+            <div class="text-6xl mb-8 font-bold tracking-widest glitch text-green-400">瘋狂調配中...</div>
+            <!-- Test Tube -->
+            <div class="relative mx-auto w-24 h-48 border-4 border-green-400 rounded-b-3xl overflow-hidden">
+                <div class="absolute bottom-0 w-full h-0 bg-gradient-to-t from-green-400 to-cyan-400 transition-all duration-3000" id="liquid"></div>
+                <!-- Drops -->
+                <div class="absolute top-8 left-1/2 -translate-x-1/2 w-3 h-3 bg-cyan-400 rounded-full drop" style="animation-delay: 0s"></div>
+                <div class="absolute top-8 left-1/2 -translate-x-1/2 w-3 h-3 bg-cyan-400 rounded-full drop" style="animation-delay: 0.4s"></div>
+                <div class="absolute top-8 left-1/2 -translate-x-1/2 w-3 h-3 bg-cyan-400 rounded-full drop" style="animation-delay: 0.8s"></div>
             </div>
+            <div class="text-green-400 font-mono text-xl mt-6">FILLING CATALYST...</div>
         </div>
     </div>
 
-    <header class="border-b border-green-500/40 bg-black/80 backdrop-blur sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <i class="fas fa-flask text-4xl text-green-500"></i>
+    <header class="border-b border-green-500/30 bg-black/90 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-flask text-3xl text-green-500"></i>
                 <div>
-                    <h1 class="text-3xl font-bold">瘋狂觸媒實驗室</h1>
-                    <p class="text-green-400 text-sm">行銷小凱的空汙防制黑科技基地</p>
+                    <h1 class="text-2xl font-bold">瘋狂觸媒實驗室</h1>
+                    <p class="text-xs text-green-400">行銷小凱的空汙防制黑科技基地</p>
                 </div>
             </div>
-            <a href="https://www.tw-catalyst.com" target="_blank" class="hover:text-green-400">← 返回官網</a>
+            <a href="https://www.tw-catalyst.com" class="text-sm text-green-400 hover:text-white">← 返回官網</a>
         </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-8 py-12">
-        <h2 class="text-5xl font-bold text-center mb-3">瘋狂科學家在此！</h2>
-        <p class="text-center text-green-400 mb-12 text-xl">點擊卡片，進入我瘋狂整理的專業知識</p>
+    <div class="max-w-7xl mx-auto px-6 py-12">
+        <h2 class="text-5xl font-bold text-center mb-2">瘋狂科學家在此！</h2>
+        <p class="text-center text-green-400 mb-12">點擊大類別，探索更多相關知識</p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="topics"></div>
+        <!-- Latest -->
+        <div class="mb-16">
+            <h3 class="text-2xl font-bold mb-6 text-green-400">⭐ 最新文章</h3>
+            <div id="latest" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </div>
 
-        <div id="article" class="hidden mt-12 bg-slate-900/95 border border-green-500/40 rounded-3xl p-12 max-w-4xl mx-auto">
-            <button onclick="backToHome()" class="mb-8 px-8 py-4 bg-green-600 hover:bg-green-500 rounded-2xl flex items-center gap-3 text-lg font-medium">
-                <i class="fas fa-arrow-left"></i> 返回瘋狂主題列表
+        <!-- Categories -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="categories"></div>
+
+        <!-- Subview -->
+        <div id="subview" class="hidden mt-16">
+            <button onclick="backToCategories()" class="mb-8 px-6 py-3 bg-green-600 hover:bg-green-500 rounded-2xl flex items-center gap-3 text-lg font-medium">
+                <i class="fas fa-arrow-left"></i> 返回大類別
             </button>
-            <div id="articleContent" class="prose prose-invert max-w-none text-lg leading-relaxed"></div>
-            <div class="mt-12 flex gap-4 justify-center">
-                <button onclick="backToHome()" class="px-8 py-4 bg-slate-800 hover:bg-green-600 rounded-2xl">← 回主題列表</button>
-                <button onclick="switchRandomTopic()" class="px-8 py-4 bg-slate-800 hover:bg-green-600 rounded-2xl">換一篇</button>
-            </div>
+            <h2 id="categoryTitle" class="text-4xl font-bold mb-10"></h2>
+            <div id="subArticles" class="space-y-6"></div>
         </div>
     </div>
 
-    <footer class="py-20 bg-black/70 border-t border-green-500/30 text-center">
-        <p class="mb-6 text-green-400 text-xl">想直接問行銷小凱？</p>
-        <a href="https://lin.ee/r0lfbqu" target="_blank" class="inline-flex flex-col items-center gap-5 hover:scale-110 transition">
-            <div class="w-32 h-32 bg-green-500 rounded-3xl flex items-center justify-center shadow-xl">
-                <i class="fab fa-line text-8xl text-black"></i>
-            </div>
-            <span class="text-2xl text-green-400">加入 LINE@ 行銷小凱</span>
-        </a>
+    <footer class="bg-black py-16 border-t border-green-500/30">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-green-400 mb-6">想直接問行銷小凱？</p>
+            <a href="https://lin.ee/r0lfbqu" target="_blank" class="inline-flex flex-col items-center gap-4">
+                <div class="w-20 h-20 bg-green-500 rounded-2xl flex items-center justify-center">
+                    <i class="fab fa-line text-6xl text-black"></i>
+                </div>
+                <span class="text-green-400">加入 LINE@ 行銷小凱</span>
+            </a>
+        </div>
     </footer>
 
     <script>
-        const articles = {
-            voc: { title: "VOC 催化氧化技術全解析", content: "<p>詳細說明原理、設備選型、陶瓷載體規格等...</p>" },
-            scr: { title: "SCR 脫硝系統操作指南", content: "<p>溫度控制、觸媒壽命、再生技巧...</p>" },
-            dpf: { title: "DPF 柴油顆粒濾器維護", content: "<p>再生技術與實務經驗分享...</p>" },
-            regs: { title: "2026 台灣空污法規重點", content: "<p>EPA 最新要求與合規指南...</p>" }
+        const data = {
+            voc: { name: "VOC 催化氧化", articles: [
+                { title: "VOC 催化氧化技術全解析", content: "<p>詳細原理、設備選型與陶瓷載體選擇...</p>" },
+                { title: "VOC 設備選型實務", content: "<p>根據工廠規模的推薦...</p>" }
+            ]},
+            scr: { name: "SCR 脫硝系統", articles: [
+                { title: "SCR 操作指南", content: "<p>溫度控制與觸媒壽命...</p>" }
+            ]},
+            dpf: { name: "DPF 柴油顆粒濾器", articles: [
+                { title: "DPF 維護技巧", content: "<p>堵塞原因與再生方法...</p>" }
+            ]},
+            regs: { name: "台灣空污法規", articles: [
+                { title: "2026 法規重點", content: "<p>EPA 最新要求...</p>" }
+            ]}
         };
 
-        function renderTopics() {
-            document.getElementById('topics').innerHTML = Object.keys(articles).map(key => `
-                <div onclick="showArticle('${key}')" class="bg-slate-800 hover:bg-slate-700 border-2 border-green-500/50 hover:border-green-400 rounded-3xl p-12 cursor-pointer transition-all group">
-                    <h3 class="text-3xl font-bold group-hover:text-green-400">${articles[key].title}</h3>
+        function renderLatest() {
+            const container = document.getElementById('latest');
+            let html = '';
+            let count = 0;
+            Object.keys(data).forEach(key => {
+                data[key].articles.forEach(art => {
+                    if (count < 4) {
+                        html += `
+                            <div onclick="showArticle('${key}', '${art.title}')" class="bg-zinc-900 border border-green-500/30 hover:border-green-400 rounded-3xl overflow-hidden cursor-pointer card">
+                                <div class="h-40 bg-gradient-to-br from-green-900 to-blue-900 flex items-center justify-center text-6xl">📊</div>
+                                <div class="p-5">
+                                    <h4 class="font-semibold text-base">${art.title}</h4>
+                                </div>
+                            </div>
+                        `;
+                        count++;
+                    }
+                });
+            });
+            container.innerHTML = html;
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categories');
+            container.innerHTML = Object.keys(data).map(key => `
+                <div onclick="showCategory('${key}')" class="bg-zinc-900 hover:bg-zinc-800 rounded-3xl p-10 cursor-pointer transition-all card text-center">
+                    <h3 class="text-2xl font-bold text-green-400">${data[key].name}</h3>
                 </div>
             `).join('');
         }
 
-        function showArticle(key) {
-            const art = articles[key];
-            document.getElementById('topics').classList.add('hidden');
-            document.getElementById('articleContent').innerHTML = `<h2 class="text-4xl font-bold mb-8">${art.title}</h2>${art.content}`;
+        function showCategory(key) {
+            const cat = data[key];
+            document.getElementById('categories').classList.add('hidden');
+            document.getElementById('latest').parentElement.classList.add('hidden');
+            const sub = document.getElementById('subview');
+            document.getElementById('categoryTitle').textContent = cat.name;
+            let html = '';
+            cat.articles.forEach(art => {
+                html += `
+                    <div onclick="showArticle('${key}', '${art.title}')" class="bg-zinc-900 hover:bg-zinc-800 p-8 rounded-3xl mb-6 cursor-pointer border border-green-500/20">
+                        <h4 class="text-xl font-semibold">${art.title}</h4>
+                    </div>
+                `;
+            });
+            document.getElementById('subArticles').innerHTML = html;
+            sub.classList.remove('hidden');
+        }
+
+        function showArticle(catKey, title) {
+            const cat = data[catKey];
+            const art = cat.articles.find(a => a.title === title);
+            document.getElementById('articleContent').innerHTML = `<h2 class="text-4xl font-bold mb-8">${art.title}</h2><div class="prose prose-invert">${art.content}</div>`;
             document.getElementById('article').classList.remove('hidden');
+            document.getElementById('subview').classList.add('hidden');
         }
 
         function backToHome() {
             document.getElementById('article').classList.add('hidden');
-            document.getElementById('topics').classList.remove('hidden');
+            document.getElementById('subview').classList.remove('hidden');
         }
 
-        function switchRandomTopic() {
-            const keys = Object.keys(articles);
-            showArticle(keys[Math.floor(Math.random() * keys.length)]);
+        function backToCategories() {
+            document.getElementById('subview').classList.add('hidden');
+            document.getElementById('categories').classList.remove('hidden');
+            document.getElementById('latest').parentElement.classList.remove('hidden');
         }
 
-        // 強制顯示主畫面
         window.onload = () => {
-            renderTopics();
-            setTimeout(() => {
-                document.getElementById('loading').style.display = 'none';
-            }, 1600);
+            renderCategories();
+            renderLatest();
+            setTimeout(() => document.getElementById('loading').style.display = 'none', 2800);
         };
     </script>
 </body>
